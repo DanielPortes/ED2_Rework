@@ -5,26 +5,30 @@
 #include "Review.h"
 #include <fstream>
 
-std::ostream &operator<<(std::ostream &outFile, const Review &review)
+std::ostream &operator<<(std::ostream &outFile, Review const &review)
 {
     // write id
-    auto sizeId = review.id.size();
-    outFile.write(reinterpret_cast<const char *>(&sizeId), sizeof(sizeId));
-    outFile.write(review.id.c_str(), sizeId);
+    auto sizeId = static_cast<int>(review.id.size());
+    outFile.write(reinterpret_cast<char *>(&sizeId), sizeof(sizeId));
+    outFile.write(review.id.data(), sizeId);
+
     // write text
-    auto sizeText = review.text.size();
-    outFile.write(reinterpret_cast<const char *>(&sizeText), sizeof(sizeText));
-    outFile.write(review.text.c_str(), sizeText);
+    int sizeText = static_cast<int>(review.text.size());
+    outFile.write(reinterpret_cast<char *>(&sizeText), sizeof(sizeText));
+    outFile.write(review.text.data(), sizeText);
+
     // write upvotes
     outFile.write(reinterpret_cast<const char *>(&review.upvotes), sizeof(review.upvotes));
+
     // write app_version
-    auto sizeAppVersion = review.app_version.size();
-    outFile.write(reinterpret_cast<const char *>(&sizeAppVersion), sizeof(sizeAppVersion));
-    outFile.write(review.app_version.c_str(), sizeAppVersion);
+    int sizeAppVersion = static_cast<int>(review.app_version.size());
+    outFile.write(reinterpret_cast<char *>(&sizeAppVersion), sizeof(sizeAppVersion));
+    outFile.write(review.app_version.data(), sizeAppVersion);
+
     // write posted_date
-    auto sizePostedDate = review.posted_date.size();
-    outFile.write(reinterpret_cast<const char *>(&sizePostedDate), sizeof(sizePostedDate));
-    outFile.write(reinterpret_cast<const char *>(review.id.c_str()), sizePostedDate);
+    int sizePostedDate = static_cast<int>(review.posted_date.size());
+    outFile.write(reinterpret_cast<char *>(&sizePostedDate), sizeof(sizePostedDate));
+    outFile.write(review.posted_date.data(), sizePostedDate);
 
     return outFile;
 }

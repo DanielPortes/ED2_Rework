@@ -7,20 +7,17 @@
 
 #include <filesystem>
 #include <vector>
+#include "File.h"
 
 class Review;
-class CsvFile
+
+class CsvFile : public File
 {
 private:
-    std::filesystem::path inFile;
-    std::filesystem::path outFile;
-
-    unsigned long getFileSize();
-
-    auto bufferingFile() -> std::unique_ptr<std::vector<unsigned char>>;
 
 public:
     CsvFile(int argc, char *argv[]);
+
     auto read() -> std::unique_ptr<std::vector<Review>>;
 };
 

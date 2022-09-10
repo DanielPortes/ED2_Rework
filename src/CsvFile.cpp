@@ -15,24 +15,26 @@ CsvFile::CsvFile(int argc, char *argv[])
         std::cerr << "Error program arguments";
         exit(10);
     }
-    inFile = argv[1];
-    outFile = argv[2];
+    dataseet = argv[1];
+    binFile = argv[2];
 }
 
+// read the csv file and return a vector of reviews
 auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
 {
-    if (exists(outFile) && is_regular_file(outFile))
+    /*if (exists(binFile) && is_regular_file(binFile))
     {
         std::cout << "File already exists.\n";
         return nullptr;
-    }
+    }*/
     // se o arquivo existir nao ha necessidade de reescreve-lo
     auto file = bufferingFile();
     // file to stringstream
     std::stringstream stream(reinterpret_cast<char*>(file->data()));
     auto reviews = std::make_unique<std::vector<Review>>();
-    // skip first file from file
-    stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // skip first line from file
+    std::string temp;
+    std::getline(stream, temp);
 
     int counterReviews{0};
     Review review;
@@ -51,6 +53,8 @@ auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
                 if (stream.get() != '"') // last quote already read
                 { break; }
             }
+            // remove every /n from text
+            // review.text.erase(std::remove(review.text.begin(), review.text.end(), '/n'), review.text.end());
         }
         else
         {
@@ -72,26 +76,4 @@ auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
         counterReviews++;
     }
     return reviews;
-}
-
-unsigned long CsvFile::getFileSize()
-{
-    return std::filesystem::file_size(this->inFile);
-}
-
-auto CsvFile::bufferingFile() -> std::unique_ptr<std::vector<unsigned char>>
-{
-    auto fileSize = getFileSize();
-    std::ifstream file(this->inFile);
-    auto input = std::make_unique<std::vector<unsigned char>>();
-    input->resize(fileSize);
-    file.read(reinterpret_cast<char *>(input->data()), static_cast<long>(fileSize));
-    if (!file.fail() && fileSize == file.gcount())
-    {
-        return input;
-    }
-    else
-    {
-        throw std::runtime_error("Error reading file");
-    }
 }

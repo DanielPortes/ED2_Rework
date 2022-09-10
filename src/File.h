@@ -10,9 +10,9 @@
 
 class File
 {
-private:
-    std::filesystem::path inFile;
-    std::filesystem::path outFile;
+protected:
+    std::filesystem::path dataseet;
+    std::filesystem::path binFile;
 
     unsigned long getFileSize();
 

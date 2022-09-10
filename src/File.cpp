@@ -5,12 +5,12 @@
 #include "File.h"
 
 unsigned long File::getFileSize()
-{ return std::filesystem::file_size(this->inFile); }
+{ return std::filesystem::file_size(this->dataseet); }
 
 auto File::bufferingFile() -> std::unique_ptr<std::vector<unsigned char>>
 {
     auto fileSize = getFileSize();
-    std::ifstream file(this->inFile);
+    std::ifstream file(this->dataseet);
     auto input = std::make_unique<std::vector<unsigned char>>();
     input->resize(fileSize);
     file.read(reinterpret_cast<char *>(input->data()), static_cast<long>(fileSize));
