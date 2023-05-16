@@ -11,13 +11,24 @@
 class File
 {
 protected:
-    std::filesystem::path dataseet;
-    std::filesystem::path binFile;
+    std::filesystem::path path;
 
     unsigned long getFileSize();
 
     auto bufferingFile() -> std::unique_ptr<std::vector<unsigned char>>;
 
+    static auto checkExistence(const std::filesystem::path &) -> bool;
+
+public:
+    explicit File(const std::string &path);
+
+    File() = default;
+
+    auto getCaminho() -> std::filesystem::path
+    { return path; }
+
+    template<class T>
+    friend File &operator<<(File &file, const std::vector<T> &vec);
 };
 
 

@@ -7,6 +7,7 @@
 
 
 #include <string>
+
 class CsvFile;
 
 struct Review
@@ -14,7 +15,7 @@ struct Review
 private:
     std::string id;
     std::string text;
-    int upvotes {0};
+    int upvotes{0};
     std::string app_version;
     std::string posted_date;
 

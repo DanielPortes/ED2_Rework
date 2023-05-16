@@ -5,29 +5,32 @@
 #include "CsvFile.h"
 #include "Review.h"
 
-#include <fstream>
 #include <iostream>
 
-CsvFile::CsvFile(int argc, char *argv[])
+
+CsvFile::CsvFile(int argc, char **argv)
 {
     if (argc != 3)
     {
         std::cerr << "Error program arguments";
         exit(10);
     }
-    dataseet = argv[1];
-    binFile = argv[2];
+    this->path = argv[1];
+    this->binPath = argv[2];
 }
+
 
 // read the csv file and return a vector of reviews
 auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
 {
-    /*if (exists(binFile) && is_regular_file(binFile))
+    auto binFileExists = this->checkExistence(this->binPath);
+    if (binFileExists)
     {
-        std::cout << "File already exists.\n";
         return nullptr;
-    }*/
-    // se o arquivo existir nao ha necessidade de reescreve-lo
+    }
+
+    std::cout << "Reading csv file...\n";
+
     auto file = bufferingFile();
     // file to stringstream
     std::stringstream stream(reinterpret_cast<char*>(file->data()));
@@ -35,6 +38,7 @@ auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
     // skip first line from file
     std::string temp;
     std::getline(stream, temp);
+
 
     int counterReviews{0};
     Review review;
@@ -53,8 +57,6 @@ auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
                 if (stream.get() != '"') // last quote already read
                 { break; }
             }
-            // remove every /n from text
-            // review.text.erase(std::remove(review.text.begin(), review.text.end(), '/n'), review.text.end());
         }
         else
         {
@@ -75,5 +77,11 @@ auto CsvFile::read() -> std::unique_ptr<std::vector<Review>>
         reviews->push_back(review);
         counterReviews++;
     }
+    this->reviewsCount = counterReviews;
     return reviews;
+}
+
+CsvFile::CsvFile(const std::string &path) : File(path)
+{
+    this->path = path;
 }
