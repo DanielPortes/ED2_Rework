@@ -10,20 +10,25 @@
 #include "BinFile.h"
 #include "CsvFile.h"
 
+
+template<typename T>
+T getUserInputFromConsole(std::string message = "");
+
+void writeTo(std::ostream &output, std::unique_ptr<std::vector<Review>> reviews);
+
+
 /*
  * This class represents the actions from the teacher to test the students' code.
  * */
-class Tester
-{
+class Tester {
 private:
     std::unique_ptr<CsvFile> csvFile;
-    std::unique_ptr<BinFile> binFile;
+    std::shared_ptr<BinFile> binFile;
 
-    template<typename T>
-    T getInput(std::string message);
 
 public:
     Tester(int argc, char *argv[]);
+
     ~Tester() = default;
 
 //    auto testAll(int part) -> void;
@@ -38,8 +43,8 @@ public:
 
 //    Part III
 
-    template<class T>
-    void exportToFileOrConsole(std::unique_ptr<std::vector<T>> &reviews, const File &file);
+
+
 
 };
 

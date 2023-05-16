@@ -24,6 +24,10 @@ public:
     friend std::ostream &operator<<(std::ostream &outFile, Review const &review);
 
     friend std::istream &operator>>(std::istream &inFile, Review &review);
+
+    bool operator<(const Review &rhs) const;
+
+    bool operator>(const Review &rhs) const;
 };
 
 

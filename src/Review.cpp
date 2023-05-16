@@ -64,3 +64,14 @@ std::istream &operator>>(std::istream &inFile, Review &review)
 
     return inFile;
 }
+
+bool Review::operator<(const Review &rhs) const
+{
+    return upvotes < rhs.upvotes;
+}
+
+bool Review::operator>(const Review &rhs) const
+{
+    return upvotes > rhs.upvotes;
+}
+

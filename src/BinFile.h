@@ -17,11 +17,13 @@ class Review;
  *
  * Write and read the binary
  * */
-class BinFile : public File
-{
+class BinFile : public File {
 private:
 //    TODO:  rename superclass path to csvPath
-//    std::filesystem::path csvPath;
+
+// a problem witg BinFile is that it has two paths, one for the csv file and another for the binary file
+    std::filesystem::path Path;
+
     std::filesystem::path binPath;
 
     unsigned long reviewsCount{0};
@@ -46,6 +48,10 @@ public:
     auto read() -> std::unique_ptr<std::vector<Review>>;
 
     auto getReviewsCount() -> const unsigned long;
+
+    const std::filesystem::path &getBinpath() const;
+
+
 };
 
 
