@@ -49,7 +49,7 @@ public:
 
     auto getReviewsCount() -> const unsigned long;
 
-    const std::filesystem::path &getBinpath() const;
+    [[nodiscard]] const std::filesystem::path &getBinpath() const;
 
 
 };

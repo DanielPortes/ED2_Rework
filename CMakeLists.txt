@@ -17,4 +17,8 @@ add_executable(ED2_Rework
         src/File.h
         src/main.cpp
         src/Review.cpp
-        src/Review.h src/Tester.cpp src/Tester.h)
+        src/Review.h
+        src/Tester.cpp
+        src/Tester.h
+        src/Sort.h
+        src/Sort.cpp)

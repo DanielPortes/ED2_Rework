@@ -16,6 +16,8 @@ T getUserInputFromConsole(std::string message = "");
 
 void writeTo(std::ostream &output, std::unique_ptr<std::vector<Review>> reviews);
 
+template<typename T>
+void quickSort(std::unique_ptr<std::vector<T>>& v);
 
 /*
  * This class represents the actions from the teacher to test the students' code.
@@ -40,6 +42,11 @@ public:
     auto accessNRandomReviews() -> void;
 
 //    Part II
+
+// use Sort to sort the reviews
+    auto sortReviews() -> void;
+
+
 
 //    Part III
 

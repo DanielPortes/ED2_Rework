@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
 
     Tester tester(argc, argv);
 //    tester.accessReview();
-    tester.accessNRandomReviews();
+//    tester.accessNRandomReviews();
+    tester.sortReviews();
 
+    return 0;
 
 }
