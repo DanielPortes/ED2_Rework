@@ -9,13 +9,16 @@
 
 #include "Sort.h"
 #include "Tester.h"
+
+#include <algorithm>
+
 #include "CsvFile.h"
 #include "BinFile.h"
 #include "Review.h"
 
 // helper function to get input from the user
 template<typename T>
-T getUserInputFromConsole(const std::string &message) {
+T getUserInputFromConsole(const std::string&message) {
     T input;
     std::string inputString;
     while (true) {
@@ -44,7 +47,7 @@ enum class OutputType {
     File
 };
 
-auto returnVectorWithRandomNumbers(auto totalNReviews, const std::shared_ptr<BinFile>& binFile) {
+auto returnVectorWithRandomNumbers(auto totalNReviews, const std::shared_ptr<BinFile>&binFile) {
     //  get N random numbers
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -59,70 +62,67 @@ auto returnVectorWithRandomNumbers(auto totalNReviews, const std::shared_ptr<Bin
 }
 
 auto Tester::accessNRandomReviews() const -> void {
-    // ask the user for console output or txt output
     std::cout << "Do you want to print the output in the console or in a txt file?\n"
-                 "1 - Console\n"
-                 "2 - File\n"
-                 "Your choice: ";
+            "1 - Console\n"
+            "2 - File\n"
+            "Your choice: ";
 
-    //    get the user choice to export to console or file
     const auto mainChoice = getUserInputFromConsole<int>();
 
     std::cout << "How many reviews do you want to import?\n"
-                 "Your choice: ";
+            "Your choice: ";
 
-    //    get the number of reviews to import
     auto nReviews = getUserInputFromConsole<unsigned long>();
 
     std::cout << "\nImporting...\n";
 
-    //    randomNumbers is a vector with N random numbers
     const auto randomNumbers = returnVectorWithRandomNumbers(nReviews, binFile);
 
-    //   randomVector is a vector with N random reviews
     const auto randomVector = std::make_unique<std::vector<Review>>(nReviews);
     for (int i = 0; i < nReviews; ++i) {
         (*randomVector)[i] = this->binFile->getReview((*randomNumbers)[i]);
     }
 
-//    open binFile
-    std::ofstream file;
+    writeToOutput(mainChoice, randomVector);
+}
+
+void writeToOutput(int mainChoice, const std::unique_ptr<std::vector<Review>>&randomVector) {
     if (mainChoice == static_cast<int>(OutputType::File)) {
-        file.open("../output.txt");
+        std::ofstream file("../output.txt");
+        writeTo(file, randomVector);
     }
-    std::ostream &output = mainChoice == static_cast<int>(OutputType::File) ? file : std::cout;
-
-    writeTo(output, randomVector);
-}
-
-// make a function that work with std::cout and std::ofstream as input, wich write the reviews in the output
-void writeTo(std::ostream &output, const std::unique_ptr<std::vector<Review>>& reviews) {
-    for (const auto &review: *reviews) {
-        output << review << "\n\n";
+    else {
+        writeTo(std::cout, randomVector);
     }
 }
 
-Tester::Tester(const int argc, char **argv) {
+void writeTo(std::ostream&output, const std::unique_ptr<std::vector<Review>>&randomVector) {
+    // Write logic here, for example:
+    for (const auto&review: *randomVector) {
+        output << review << '\n';
+    }
+}
+
+Tester::Tester(const int argc, char** argv) {
     if (argc != 3) {
         throw std::invalid_argument("Error program arguments");
     }
     this->csvFile = std::make_unique<CsvFile>(argv[1]);
     this->binFile = std::make_shared<BinFile>(argv[1], argv[2]);
-
 }
 
 auto Tester::sortReviews() const -> void {
     std::cout << "How many reviews do you want to import?\n"
-                 "Your choice: ";
+            "Your choice: ";
 
     // Get the number of reviews to import
     auto nReviews = getUserInputFromConsole<unsigned long>();
 
     std::cout << "How many times do you want to run the sorting algorithm?\n"
-                 "Your choice: ";
+            "Your choice: ";
 
     // Get the number of times to run the sorting algorithm
-    const auto nRuns = getUserInputFromConsole<unsigned long>();
+    const auto numSortingRuns = getUserInputFromConsole<unsigned long>();
 
     std::cout << "\nImporting...\n";
 
@@ -130,37 +130,39 @@ auto Tester::sortReviews() const -> void {
     const auto randomNumbers = returnVectorWithRandomNumbers(nReviews, binFile);
 
     // RandomVector is a vector with N random reviews using the randomNumbers values as index
-    auto randomVector = std::make_shared < std::vector < Review >> (nReviews);
+    auto randomVector = std::make_shared<std::vector<Review>>(nReviews);
     for (int i = 0; i < nReviews; ++i) {
         (*randomVector)[i] = this->binFile->getReview((*randomNumbers)[i]);
     }
 
-    std::vector totalComparisons(nRuns, 0);
-    std::vector totalMovements(nRuns, 0);
+    std::vector totalComparisons(numSortingRuns, 0);
+    std::vector totalMovements(numSortingRuns, 0);
 
-    for (int run = 0; run < nRuns; ++run) {
-        std::cout << "Which sorting algorithm do you want to use?\n"
-                     "1 - Quick Sort\n"
-                     "2 - Heap Sort\n"
-                     "3 - Comb Sort\n"
-                     "Your choice: ";
+    std::cout << "Which sorting algorithm do you want to use?\n"
+            "1 - Quick Sort\n"
+            "2 - Heap Sort\n"
+            "3 - Comb Sort\n"
+            "Your choice: ";
+    auto const sortChoice = getUserInputFromConsole<int>();
 
-        int sortChoice;
-        std::cin >> sortChoice;
+    std::cout << "Do you want to print the output in the console or in a txt file?\n"
+    "1 - Console\n"
+    "2 - File\n"
+    "Your choice: ";
 
+    const auto outputChoice = getUserInputFromConsole<int>();
+
+    for (int i = 0; i < numSortingRuns; ++i) {
         switch (sortChoice) {
             case 1: {
-                std::cout << "Sorting with Quick Sort...\n";
                 Sort<Review>::quickSort(*randomVector);
                 break;
             }
             case 2: {
-                std::cout << "Sorting with Heap Sort...\n";
                 Sort<Review>::heapSort(randomVector);
                 break;
             }
             case 3: {
-                std::cout << "Sorting with Comb Sort...\n";
                 Sort<Review>::combSort(randomVector);
                 break;
             }
@@ -171,19 +173,22 @@ auto Tester::sortReviews() const -> void {
         }
 
         // Accumulate statistics
-        totalComparisons[run] = Sort<Review>::getComparisons();
-        totalMovements[run] = Sort<Review>::getMovements();
-
-        // Reset counters for next run
-        Sort<Review>::resetCounters();
+        totalComparisons[i] = Sort<Review>::getComparisons();
+        totalMovements[i] = Sort<Review>::getMovements();
     }
 
     // Calculate averages
-    const double averageComparisons = static_cast<double>(std::accumulate(totalComparisons.begin(), totalComparisons.end(), 0)) / nRuns;
-    const double averageMovements = static_cast<double>(std::accumulate(totalMovements.begin(), totalMovements.end(), 0)) / nRuns;
+    const double averageComparisons = static_cast<double>(std::accumulate(
+                                          totalComparisons.begin(), totalComparisons.end(), 0)) / numSortingRuns;
+    const double averageMovements = static_cast<double>(
+                                        std::accumulate(totalMovements.begin(), totalMovements.end(), 0)) /
+                                    numSortingRuns;
+
+    auto uniquePtr = std::make_unique<std::vector<Review>>(*randomVector);
+    writeToOutput(outputChoice, std::move(uniquePtr));
 
     // Print averages
     std::cout << "Average Comparisons: " << averageComparisons << std::endl;
     std::cout << "Average Movements: " << averageMovements << std::endl;
-}
 
+}

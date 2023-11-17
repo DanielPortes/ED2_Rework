@@ -38,14 +38,20 @@ std::istream &operator>>(std::istream &inFile, Review &review)
     // read id
     int sizeId{0};
     inFile.read(reinterpret_cast<char *>(&sizeId), sizeof(sizeId));
-    review.id.resize(sizeId);
-    inFile.read(reinterpret_cast<char *>(&review.id.front()), sizeId);
+    if (sizeId > 0)
+    {
+        review.id.resize(sizeId);
+        inFile.read(reinterpret_cast<char *>(&review.id.front()), sizeId);
+    }
 
     // read text
     int sizeText{0};
     inFile.read(reinterpret_cast<char *>(&sizeText), sizeof(sizeText));
-    review.text.resize(sizeText);
-    inFile.read(reinterpret_cast<char *>(&review.text.front()), sizeText);
+    if (sizeText > 0)
+    {
+        review.text.resize(sizeText);
+        inFile.read(reinterpret_cast<char *>(&review.text.front()), sizeText);
+    }
 
     // read upvotes
     inFile.read(reinterpret_cast<char *>(&review.upvotes), sizeof(review.upvotes));
@@ -53,15 +59,20 @@ std::istream &operator>>(std::istream &inFile, Review &review)
     // read app_version
     int sizeAppVersion{0};
     inFile.read(reinterpret_cast<char *>(&sizeAppVersion), sizeof(sizeAppVersion));
-    review.app_version.resize(sizeAppVersion);
-    inFile.read(reinterpret_cast<char *>(&review.app_version.front()), sizeAppVersion);
+    if (sizeAppVersion > 0)
+    {
+        review.app_version.resize(sizeAppVersion);
+        inFile.read(reinterpret_cast<char *>(&review.app_version.front()), sizeAppVersion);
+    }
 
     // read posted_date
     int sizePostedDate{0};
     inFile.read(reinterpret_cast<char *>(&sizePostedDate), sizeof(sizePostedDate));
-    review.posted_date.resize(sizePostedDate);
-    inFile.read(reinterpret_cast<char *>(&review.posted_date.front()), sizePostedDate);
-
+    if (sizePostedDate > 0)
+    {
+        review.posted_date.resize(sizePostedDate);
+        inFile.read(reinterpret_cast<char *>(&review.posted_date.front()), sizePostedDate);
+    }
     return inFile;
 }
 

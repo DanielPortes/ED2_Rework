@@ -15,7 +15,7 @@ struct Review
 private:
     std::string id;
     std::string text;
-    int upvotes{0};
+    int upvotes;
     std::string app_version;
     std::string posted_date;
 

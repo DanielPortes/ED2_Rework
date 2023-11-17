@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <memory>
+#include "Sort.h"
 
 /**
  * This class is responsible for sorting the reviews
@@ -52,23 +53,18 @@ public:
     static int getNextGap(int gap);
 };
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-
-#include "Sort.h"
-
 
 // Quick Sort
 
 template<typename T>
 void Sort<T>::quickSort(std::vector<T>&v) {
+    resetCounters();
     quickSort(v, 0, v.size() - 1);
 }
 
 template<typename T>
 void Sort<T>::quickSort(std::vector<T>&v, int left, int right) {
+    ++comparisons;
     if (left < right) {
         int pivotIndex = partition(v, left, right);
         quickSort(v, left, pivotIndex - 1);
@@ -82,13 +78,16 @@ int Sort<T>::partition(std::vector<T>&v, int left, int right) {
     int i = left - 1;
 
     for (int j = left; j < right; ++j) {
+        ++comparisons;
         if (v[j] < pivot) {
             ++i;
             std::swap(v[i], v[j]);
+            ++movements;
         }
     }
 
     std::swap(v[i + 1], v[right]);
+    ++movements;
     return i + 1;
 }
 
@@ -97,16 +96,21 @@ int Sort<T>::partition(std::vector<T>&v, int left, int right) {
 
 template<typename T>
 void Sort<T>::heapSort(std::shared_ptr<std::vector<T>>&v) {
+    resetCounters();
+
     int n = v->size();
 
     // Build a max-heap
     for (int i = n / 2 - 1; i >= 0; --i) {
+        ++comparisons;
         heapify(*v, n, i);
     }
 
     // Extract elements from the heap one by one
     for (int i = n - 1; i > 0; --i) {
+        ++comparisons;
         std::swap((*v)[0], (*v)[i]);
+        ++movements;
         heapify(*v, i, 0);
     }
 }
@@ -117,16 +121,19 @@ void Sort<T>::heapify(std::vector<T>&v, int n, int i) {
     int left = 2 * i + 1;
     int right = 2 * i + 2;
 
+    comparisons += 2;
     if (left < n && v[left] > v[largest]) {
         largest = left;
     }
-
+    comparisons += 2;
     if (right < n && v[right] > v[largest]) {
         largest = right;
     }
 
+    ++comparisons;
     if (largest != i) {
         std::swap(v[i], v[largest]);
+        ++movements;
         heapify(v, n, largest);
     }
 }
@@ -135,6 +142,7 @@ void Sort<T>::heapify(std::vector<T>&v, int n, int i) {
 
 template<typename T>
 void Sort<T>::combSort(std::shared_ptr<std::vector<T>>&v) {
+    resetCounters();
     combSort(v, v->size());
 }
 
@@ -144,6 +152,7 @@ void Sort<T>::combSort(std::shared_ptr<std::vector<T>>&v, int n) {
     bool swapped = true;
 
     while (gap > 1 || swapped) {
+        ++comparisons;
         gap = getNextGap(gap);
         swapped = false;
 
@@ -152,7 +161,7 @@ void Sort<T>::combSort(std::shared_ptr<std::vector<T>>&v, int n) {
             if ((*v)[i] > (*v)[i + gap]) {
                 std::swap((*v)[i], (*v)[i + gap]);
                 swapped = true;
-                movements += 2;
+                ++movements;
             }
         }
     }
@@ -161,9 +170,9 @@ void Sort<T>::combSort(std::shared_ptr<std::vector<T>>&v, int n) {
 template<typename T>
 int Sort<T>::getNextGap(int gap) {
     gap = (gap * 10) / 13;
+    ++comparisons;
     if (gap < 1) {
         return 1;
     }
     return gap;
 }
-

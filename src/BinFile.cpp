@@ -89,8 +89,8 @@ auto BinFile::getReview(long index) -> Review {
 
     // access any review in the file
     std::ifstream file(this->getBinPath(), std::ios::binary);
-    if (!file.good()) {
-        std::cerr << "Error reading file\n";
+    if (!file.is_open()) {
+        std::cerr << "Error opening file\n";
         exit(10);
     }
     //    first ignore the amount of reviews in the file
@@ -100,6 +100,7 @@ auto BinFile::getReview(long index) -> Review {
     for (long i = 0; i < index; i++) {
         file >> review;
     }
+
     file.close();
     return review;
 }

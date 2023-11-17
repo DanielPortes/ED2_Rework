@@ -15,6 +15,7 @@ template<typename T>
 T getUserInputFromConsole(const std::string &message = "");
 
 void writeTo(std::ostream &output, const std::unique_ptr<std::vector<Review>>&reviews);
+void writeToOutput(int mainChoice, const std::unique_ptr<std::vector<Review>>&randomVector);
 
 template<typename T>
 void quickSort(std::unique_ptr<std::vector<T>>& v);
