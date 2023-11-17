@@ -12,9 +12,9 @@
 
 
 template<typename T>
-T getUserInputFromConsole(std::string message = "");
+T getUserInputFromConsole(const std::string &message = "");
 
-void writeTo(std::ostream &output, std::unique_ptr<std::vector<Review>> reviews);
+void writeTo(std::ostream &output, const std::unique_ptr<std::vector<Review>>&reviews);
 
 template<typename T>
 void quickSort(std::unique_ptr<std::vector<T>>& v);
@@ -37,14 +37,14 @@ public:
 
 
 //    Part I
-    auto accessReview() -> void;
+    auto accessReview() const -> void;
 
-    auto accessNRandomReviews() -> void;
+    auto accessNRandomReviews() const -> void;
 
 //    Part II
 
 // use Sort to sort the reviews
-    auto sortReviews() -> void;
+    auto sortReviews() const -> void;
 
 
 
