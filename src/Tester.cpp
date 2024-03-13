@@ -14,6 +14,8 @@
 
 #include "CsvFile.h"
 #include "BinFile.h"
+#include "BTree.h"
+#include "RedBlackTree.h"
 #include "Review.h"
 
 // helper function to get input from the user
@@ -111,6 +113,15 @@ Tester::Tester(const int argc, char** argv) {
     this->binFile = std::make_shared<BinFile>(argv[1], argv[2]);
 }
 
+auto Tester::importRandomReviews(unsigned long nReviews) const -> std::shared_ptr<std::vector<Review>> {
+    const auto randomNumbers = returnVectorWithRandomNumbers(nReviews, binFile);
+    auto randomVector = std::make_shared<std::vector<Review>>(nReviews);
+    for (int i = 0; i < nReviews; ++i) {
+        (*randomVector)[i] = this->binFile->getReview((*randomNumbers)[i]);
+    }
+    return randomVector;
+}
+
 auto Tester::sortReviews() const -> void {
     std::cout << "How many reviews do you want to import?\n"
             "Your choice: ";
@@ -130,13 +141,11 @@ auto Tester::sortReviews() const -> void {
     const auto randomNumbers = returnVectorWithRandomNumbers(nReviews, binFile);
 
     // RandomVector is a vector with N random reviews using the randomNumbers values as index
-    auto randomVector = std::make_shared<std::vector<Review>>(nReviews);
-    for (int i = 0; i < nReviews; ++i) {
-        (*randomVector)[i] = this->binFile->getReview((*randomNumbers)[i]);
-    }
+    auto randomVector = importRandomReviews(nReviews);
 
-    std::vector totalComparisons(numSortingRuns, 0);
-    std::vector totalMovements(numSortingRuns, 0);
+
+    // std::vector totalComparisons(numSortingRuns, 0);
+    // std::vector totalMovements(numSortingRuns, 0);
 
     std::cout << "Which sorting algorithm do you want to use?\n"
             "1 - Quick Sort\n"
@@ -146,11 +155,14 @@ auto Tester::sortReviews() const -> void {
     auto const sortChoice = getUserInputFromConsole<int>();
 
     std::cout << "Do you want to print the output in the console or in a txt file?\n"
-    "1 - Console\n"
-    "2 - File\n"
-    "Your choice: ";
+            "1 - Console\n"
+            "2 - File\n"
+            "Your choice: ";
 
     const auto outputChoice = getUserInputFromConsole<int>();
+
+    long totalComparisons = 0;
+    long totalMovements = 0;
 
     for (int i = 0; i < numSortingRuns; ++i) {
         switch (sortChoice) {
@@ -173,16 +185,14 @@ auto Tester::sortReviews() const -> void {
         }
 
         // Accumulate statistics
-        totalComparisons[i] = Sort<Review>::getComparisons();
-        totalMovements[i] = Sort<Review>::getMovements();
+        totalComparisons += Sort<Review>::getComparisons();
+        totalMovements += Sort<Review>::getMovements();
     }
 
     // Calculate averages
-    const double averageComparisons = static_cast<double>(std::accumulate(
-                                          totalComparisons.begin(), totalComparisons.end(), 0)) / numSortingRuns;
-    const double averageMovements = static_cast<double>(
-                                        std::accumulate(totalMovements.begin(), totalMovements.end(), 0)) /
-                                    numSortingRuns;
+    const double averageComparisons = static_cast<double>(totalComparisons) / numSortingRuns;
+    const double averageMovements = static_cast<double>(totalMovements) / numSortingRuns;
+
 
     auto uniquePtr = std::make_unique<std::vector<Review>>(*randomVector);
     writeToOutput(outputChoice, std::move(uniquePtr));
@@ -190,5 +200,111 @@ auto Tester::sortReviews() const -> void {
     // Print averages
     std::cout << "Average Comparisons: " << averageComparisons << std::endl;
     std::cout << "Average Movements: " << averageMovements << std::endl;
+}
+
+// Part II
+auto Tester::countAppVersions() const -> void {
+    // read N random Reviews
+    // using your own hash table, count the amount of reviews for each app version
+    // print the M most reviewed app versions, where M is a number given by the user
+    // the output should be in the console or in a txt file, depending on the user's choice
+    // and the output should be in descending order, from the most reviewed app version to the least reviewed
+
 
 }
+
+// Part III
+auto Tester::compareDataStructures() const -> void {
+    const int N = 1000000;
+    const int B = 100;
+    const int M = 3;
+
+    std::ofstream outputFile("saida.txt");
+
+    outputFile << "Comparação de Desempenho das Estruturas de Dados\n\n";
+
+    for (int i = 1; i <= M; ++i) {
+        outputFile << "Execução " << i << ":\n";
+        compareRedBlackTree(N, B, outputFile);
+        compareBTree(N, B, 20, outputFile);
+        compareBTree(N, B, 200, outputFile);
+        outputFile << "\n";
+    }
+
+    outputFile.close();
+}
+
+auto Tester::compareRedBlackTree(int N, int B, std::ofstream& outputFile) const -> void {
+    auto randomInsertReviews = importRandomReviews(N);
+    auto randomSearchReviews = importRandomReviews(B);
+
+    RedBlackTree tree;
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+    long long comparisons = 0;
+
+    for (const auto& review : *randomInsertReviews) {
+        tree.insert(review, 0);
+        comparisons += tree.getComparisons();
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    outputFile << "Árvore Vermelho-Preto - Inserção:\n";
+    outputFile << "Comparações: " << comparisons << "\n";
+    outputFile << "Tempo: " << duration << " ms\n";
+
+    startTime = std::chrono::high_resolution_clock::now();
+    comparisons = 0;
+
+    for (const auto& review : *randomSearchReviews) {
+        tree.search(review.getId());
+        comparisons += tree.getComparisons();
+    }
+
+    endTime = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    outputFile << "Árvore Vermelho-Preto - Busca:\n";
+    outputFile << "Comparações: " << comparisons << "\n";
+    outputFile << "Tempo: " << duration << " ms\n\n";
+}
+
+auto Tester::compareBTree(int N, int B, int order, std::ofstream& outputFile) const -> void {
+    auto randomInsertReviews = importRandomReviews(N);
+    auto randomSearchReviews = importRandomReviews(B);
+
+    BTree tree(order);
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+    long long comparisons = 0;
+
+    for (const auto& review : *randomInsertReviews) {
+        tree.insert(review, 0);
+        comparisons += tree.getComparisons();
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    outputFile << "Árvore B (m = " << order << ") - Inserção:\n";
+    outputFile << "Comparações: " << comparisons << "\n";
+    outputFile << "Tempo: " << duration << " ms\n";
+
+    startTime = std::chrono::high_resolution_clock::now();
+    comparisons = 0;
+
+    for (const auto& review : *randomSearchReviews) {
+        tree.search(review.getId());
+        comparisons += tree.getComparisons();
+    }
+
+    endTime = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    outputFile << "Árvore B (m = " << order << ") - Busca:\n";
+    outputFile << "Comparações: " << comparisons << "\n";
+    outputFile << "Tempo: " << duration << " ms\n\n";
+}
+

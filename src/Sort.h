@@ -24,8 +24,8 @@ private:
     inline static unsigned long movements = 0;
 
 public:
-    static int getComparisons() { return comparisons; }
-    static int getMovements() { return movements; }
+    static auto getComparisons() -> unsigned long { return comparisons; }
+    static auto getMovements() -> unsigned long { return movements; }
 
     static void resetCounters() {
         comparisons = 0;

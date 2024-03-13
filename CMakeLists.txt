@@ -22,4 +22,10 @@ add_executable(ED2_Rework
         src/Tester.h
         src/Sort.cpp
         src/Sort.h
+        src/Hash.cpp
+        src/Hash.h
+        src/RedBlackTree.cpp
+        src/RedBlackTree.h
+        src/BTree.cpp
+        src/BTree.h
 )

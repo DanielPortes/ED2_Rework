@@ -86,3 +86,8 @@ bool Review::operator>(const Review &rhs) const
     return upvotes > rhs.upvotes;
 }
 
+std::string Review::getId() const {
+    return id;
+
+}
+

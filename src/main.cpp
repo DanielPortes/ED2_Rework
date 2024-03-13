@@ -4,11 +4,10 @@
 #include "Review.h"
 #include "Tester.h"
 
-/* run: ./exec <input_file> <output_file>
- csvFile file expected: tiktok_app_reviews.csv
- get in https://www.kaggle.com/datasets/shivamb/35-million-tiktok-mobile-app-reviews
- */
-
+// run: ./exec <input_file> <output_file>
+// csvFile file expected: tiktok_app_reviews.csv
+// get in https://www.kaggle.com/datasets/shivamb/35-million-tiktok-mobile-app-reviews
+// i.e. ./exec ../tiktok_app_reviews.csv ../out2.bin
 int main(int argc, char *argv[])
 {
 

@@ -32,6 +32,8 @@ private:
 public:
     Tester(int argc, char *argv[]);
 
+    auto importRandomReviews(unsigned long nReviews) const -> std::shared_ptr<std::vector<Review>>;
+
     ~Tester() = default;
 
 //    auto testAll(int part) -> void;
@@ -47,9 +49,16 @@ public:
 // use Sort to sort the reviews
     auto sortReviews() const -> void;
 
+    auto countAppVersions() const -> void;
+
+    auto compareDataStructures() const -> void;
+
+    auto compareRedBlackTree(int N, int B, std::ofstream&outputFile) const -> void;
+
+    auto compareBTree(int N, int B, int order, std::ofstream&outputFile) const -> void;
 
 
-//    Part III
+    //    Part III
 
 
 

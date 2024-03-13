@@ -12,7 +12,7 @@ class CsvFile;
 
 struct Review
 {
-private:
+public:
     std::string id;
     std::string text;
     int upvotes;
@@ -28,6 +28,8 @@ public:
     bool operator<(const Review &rhs) const;
 
     bool operator>(const Review &rhs) const;
+
+    std::string getId() const;
 };
 
 
