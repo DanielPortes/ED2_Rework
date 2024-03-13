@@ -28,6 +28,11 @@ private:
     std::unique_ptr<CsvFile> csvFile;
     std::shared_ptr<BinFile> binFile;
 
+    auto compareRedBlackTree(int N, int B, std::ofstream&outputFile) const -> void;
+
+    auto compareBTree(int N, int B, int order, std::ofstream&outputFile) const -> void;
+
+
 
 public:
     Tester(int argc, char *argv[]);
@@ -51,18 +56,17 @@ public:
 
     auto countAppVersions() const -> void;
 
-    auto compareDataStructures() const -> void;
-
-    auto compareRedBlackTree(int N, int B, std::ofstream&outputFile) const -> void;
-
-    auto compareBTree(int N, int B, int order, std::ofstream&outputFile) const -> void;
-
 
     //    Part III
+    auto compareDataStructures() const -> void;
 
 
+    //    Part IV
+    auto compressRandomReviews() const -> void;
 
+    auto decompressReviews() const -> void;
 
+    auto runCompressionSequence() const -> void;
 };
 
 

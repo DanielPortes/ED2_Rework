@@ -91,3 +91,7 @@ std::string Review::getId() const {
 
 }
 
+std::string Review::getText() const {
+    return text;
+}
+

@@ -4,6 +4,8 @@
 
 #include "BTree.h"
 
+#include <iostream>
+
 void BTree::insertInternal(BTreeNode *node, const Review &key, long long filePos)
 {
     if (node->isLeaf)

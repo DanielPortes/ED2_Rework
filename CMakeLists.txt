@@ -28,4 +28,6 @@ add_executable(ED2_Rework
         src/RedBlackTree.h
         src/BTree.cpp
         src/BTree.h
+        src/HuffmanCompressor.cpp
+        src/HuffmanCompressor.h
 )

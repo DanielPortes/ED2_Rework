@@ -30,6 +30,8 @@ public:
     bool operator>(const Review &rhs) const;
 
     std::string getId() const;
+
+    std::string getText() const;
 };
 
 

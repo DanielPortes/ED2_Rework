@@ -15,6 +15,7 @@
 #include "CsvFile.h"
 #include "BinFile.h"
 #include "BTree.h"
+#include "HuffmanCompressor.h"
 #include "RedBlackTree.h"
 #include "Review.h"
 
@@ -306,5 +307,68 @@ auto Tester::compareBTree(int N, int B, int order, std::ofstream& outputFile) co
     outputFile << "Árvore B (m = " << order << ") - Busca:\n";
     outputFile << "Comparações: " << comparisons << "\n";
     outputFile << "Tempo: " << duration << " ms\n\n";
+}
+
+auto Tester::compressRandomReviews() const -> void {
+    std::cout << "Digite o número de review_texts aleatórios a serem comprimidos: ";
+    int N = getUserInputFromConsole<int>("");
+
+    auto randomReviews = importRandomReviews(N);
+    std::string concatenatedText;
+    for (const auto& review : *randomReviews) {
+        concatenatedText += review.getText();
+    }
+
+    HuffmanCompressor compressor;
+    compressor.compress(concatenatedText, "reviewsComp.bin");
+
+    std::cout << "Compressão concluída. Arquivo reviewsComp.bin gerado.\n";
+}
+
+auto Tester::decompressReviews() const -> void {
+    HuffmanCompressor compressor;
+    compressor.decompress("reviewsComp.bin", "reviewsOrig.bin");
+
+    std::cout << "Descompressão concluída. Arquivo reviewsOrig.bin gerado.\n";
+}
+
+auto Tester::runCompressionSequence() const -> void {
+    const int M = 3;
+    const std::vector<int> N = {10000, 100000, 1000000};
+
+    std::ofstream outputFile("saida.txt");
+    outputFile << "Resultados da sequência de compressões:\n\n";
+
+    for (int i = 0; i < M; ++i) {
+        outputFile << "Execução " << i + 1 << ":\n";
+        for (int n : N) {
+            auto randomReviews = importRandomReviews(n);
+            std::string concatenatedText;
+            for (const auto& review : *randomReviews) {
+                concatenatedText += review.getText();
+            }
+
+            HuffmanCompressor compressor;
+            auto startTime = std::chrono::high_resolution_clock::now();
+            compressor.compress(concatenatedText, "temp.bin");
+            auto endTime = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+            long long originalSize = concatenatedText.size();
+            std::ifstream compressedFile("temp.bin", std::ios::binary | std::ios::ate);
+            long long compressedSize = compressedFile.tellg();
+            compressedFile.close();
+
+            double compressionRatio = static_cast<double>(originalSize) / compressedSize;
+
+            outputFile << "N = " << n << ":\n";
+            outputFile << "Tempo de compressão: " << duration << " ms\n";
+            outputFile << "Taxa de compressão: " << compressionRatio << "\n\n";
+        }
+        outputFile << "\n";
+    }
+
+    outputFile.close();
+    std::cout << "Sequência de compressões concluída. Resultados salvos em saida.txt.\n";
 }
 

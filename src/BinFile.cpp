@@ -7,16 +7,72 @@
 #include "BinFile.h"
 #include "Review.h"
 
+void BinFile::buildIndex() {
+    std::ifstream file(this->getBinPath(), std::ios::binary | std::ios::in);
+    if (!file.good()) {
+        std::cerr << "Error reading file\n";
+        exit(10);
+    }
+    file.read(reinterpret_cast<char *>(&reviewsCount), sizeof(reviewsCount));
+
+    Review review;
+    long position = file.tellg();
+    while (file >> review) {
+        reviewIndex[review.getId()] = position;
+        position = file.tellg();
+    }
+    file.close();
+}
+
+void BinFile::saveIndex() {
+    std::ofstream indexFile(this->indexPath, std::ios::binary | std::ios::out);
+    if (!indexFile.good()) {
+        std::cerr << "Error creating index file\n";
+        exit(10);
+    }
+    indexFile.write(reinterpret_cast<const char *>(&reviewsCount), sizeof(reviewsCount));
+    for (const auto &entry : reviewIndex) {
+        indexFile.write(entry.first.c_str(), entry.first.size() + 1);
+        indexFile.write(reinterpret_cast<const char *>(&entry.second), sizeof(entry.second));
+    }
+    indexFile.close();
+}
+
+void BinFile::loadIndex() {
+    std::ifstream indexFile(this->indexPath, std::ios::binary | std::ios::in);
+    if (!indexFile.good()) {
+        buildIndex();
+        saveIndex();
+        return;
+    }
+    indexFile.read(reinterpret_cast<char *>(&reviewsCount), sizeof(reviewsCount));
+
+    std::string reviewId;
+    long position;
+    while (indexFile.good()) {
+        std::getline(indexFile, reviewId, '\0');
+        if (reviewId.empty()) {
+            break;
+        }
+        indexFile.read(reinterpret_cast<char *>(&position), sizeof(position));
+        reviewIndex[reviewId] = position;
+    }
+    indexFile.close();
+}
+
+
 BinFile::BinFile(int argc, char *argv[]) {
     if (argc != 3) {
         std::cerr << "Error program arguments";
         exit(10);
     }
     this->path = argv[2];
+    loadIndex();
 }
 
 BinFile::BinFile(File *output) {
     this->path = output->getCaminho();
+    loadIndex();
 }
 
 void BinFile::write(std::unique_ptr<std::vector<Review>> reviews) {
@@ -82,24 +138,20 @@ auto BinFile::read() -> std::unique_ptr<std::vector<Review>> {
 }
 
 auto BinFile::getReview(long index) -> Review {
-    // Validate the index
-    if (index >= this->getReviewsCount()) {
-        throw std::out_of_range("Index out of range");
+    std::string reviewindex = std::to_string(index);
+    if (reviewIndex.find(reviewindex) == reviewIndex.end()) {
+        throw std::out_of_range("Review not found");
     }
 
-    // access any review in the file
-    std::ifstream file(this->getBinPath(), std::ios::binary);
+    std::ifstream file(this->getBinPath(), std::ios::binary | std::ios::in);
     if (!file.is_open()) {
         std::cerr << "Error opening file\n";
         exit(10);
     }
-    //    first ignore the amount of reviews in the file
-    file.ignore(sizeof(reviewsCount));
+    file.seekg(reviewIndex[reviewindex]);
 
     Review review;
-    for (long i = 0; i < index; i++) {
-        file >> review;
-    }
+    file >> review;
 
     file.close();
     return review;
