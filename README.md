@@ -1,6 +1,6 @@
 # Apresentacao
 
-Este repositorio eh uma refatoracao do zero, utilizando novas praticas de C++ adquiridas pela leitura do livro "C++ Software Design: Design Principles and Patterns for High-Quality Software" e "Modern C++ Programming Cookbook: Master Modern C++ with comprehensive solutions for C++23 and all previous standards", ambos excelentes livros.
+Este repositorio é uma refatoracao do zero, utilizando novas praticas de C++ adquiridas pela leitura do livro "C++ Software Design: Design Principles and Patterns for High-Quality Software" e "Modern C++ Programming Cookbook: Master Modern C++ with comprehensive solutions for C++23 and all previous standards", ambos excelentes livros.
 
 Apos a leitura desses livros, surgiram novas ideais de implementacao, e um desafio proprio de refazer um trabalho ardiloso proposto por meus professores na faculdade
 
